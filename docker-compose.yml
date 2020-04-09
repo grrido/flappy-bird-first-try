@@ -1,0 +1,15 @@
+version: '3'
+services:
+  node:
+    container_name: nodejs
+    build:
+      context: ./
+      dockerfile: ./docker/node/Dockerfile
+      args:
+        server_port: ${SERVER_PORT}
+    volumes:
+      - .:/var/www
+      - ./node_modules:/var/www/node_modules:cached
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+      - "${WEBPACK_PORT}:${WEBPACK_PORT}"
