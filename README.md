@@ -2,8 +2,8 @@
 
 docker-compose up -d
 
-docker exec -it node npm install
+docker exec -it nodejs npm install
 
-docker exec -it node npm start
+docker exec -it nodejs npm start
 
-got to [http://localhost:8080](http://localhost:8080)
+go to [http://localhost:8080](http://localhost:8080)
