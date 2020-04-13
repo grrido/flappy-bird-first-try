@@ -25,16 +25,20 @@ class WallGroup extends GameObjects.Group {
     };
 
     createWalls = () => {
-        const randomPosition = Math.floor(Math.random() * 3) + 3;
-        const emptyPosition = [randomPosition - 1, randomPosition, randomPosition + 1];
+        const scorePosition = Math.floor(Math.random() * 4) + 3;
+        const emptyPositions = [scorePosition - 1, scorePosition + 1];
 
         for(let i = 0; i < 10; i++) {
-            if(emptyPosition.includes(i)) {
+            if(emptyPositions.includes(i)) {
                 continue;
             }
 
             const wall = new Wall(this.scene, i, this.texture);
             this.add(wall, true);
+
+            if(i === scorePosition) {
+                wall.setVisible(false);
+            }
         }
     };
 }

@@ -1,15 +1,19 @@
 import { Game } from 'phaser';
+import { GAME } from 'src/config';
 import { LoadScene, MenuScene, GameScene } from 'src/scenes';
 
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: GAME.WIDTH,
+    height: GAME.HEIGHT,
     physics: {
-        default: 'arcade',
+        default: GAME.PHYSICS,
         arcade: {
-            gravity: { x: 0, y: 1000 }
+            gravity: {
+                x: GAME.GRAVITY.X,
+                y: GAME.GRAVITY.Y
+            }
         }
     },
     scene: [

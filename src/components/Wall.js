@@ -1,4 +1,5 @@
 import { Physics } from 'phaser';
+import { GAME } from 'src/config';
 
 
 class Wall extends Physics.Arcade.Sprite {
@@ -17,10 +18,11 @@ class Wall extends Physics.Arcade.Sprite {
     }
 
     update = () => {
-        this.body.setVelocityX(-300);
+        this.body.setVelocityX(-GAME.WALL_SPEED);
 
         if(this.body.position + this.width < 0) {
-            this.destroy(true);
+            // this.destroy(true);
+            this.disableBody(true);
         }
     };
 }

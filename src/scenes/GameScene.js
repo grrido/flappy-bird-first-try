@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { SCENES, ASSETS } from 'src/config';
+import { GAME, SCENES, ASSETS, ACTION_KEY_CODES, ACTION_POINTER_CODES } from 'src/config';
 import { Bird, WallGroup } from 'src/components';
 
 
@@ -7,6 +7,9 @@ class GameScene extends Scene {
     interval = null;
     bird = null;
     wallGroup = null;
+    score = null;
+    points = 0;
+    endGame = null;
 
     constructor()
     {
@@ -21,11 +24,13 @@ class GameScene extends Scene {
         this.bird = new Bird(this, ASSETS.BIRD);
         this.wallGroup = new WallGroup(this, ASSETS.WALL);
 
-        this.physics.add.collider(this.bird, this.wallGroup, this.collideBirdWithWall, null, this);
+        this.physics.add.overlap(this.bird, this.wallGroup, this.collideBirdWithWall, null, this);
+
+        this.interval = setInterval(this.wallGroup.createWalls, GAME.WALL_CREATE_TIMEOUT);
 
         this.bird.anims.play(this.bird.animationKey, true);
 
-        this.interval = setInterval(this.wallGroup.createWalls, 1000);
+        this.setScore();
     };
 
     update = () => {
@@ -33,12 +38,59 @@ class GameScene extends Scene {
         this.wallGroup.update();
     };
 
-    collideBirdWithWall = () => {
-        clearInterval(this.interval);
+    restart = () => {
+        this.interval = null;
+        this.bird = null;
+        this.wallGroup = null;
+        this.score = null;
+        this.points = 0;
+        this.endGame = null;
 
-        this.bird.anims.stop();
+        this.children.removeAll(false);
 
-        this.physics.pause();
+        this.scene.restart();
+    };
+
+    collideBirdWithWall = (bird, wall) => {
+        if(wall.visible) {
+            this.physics.pause();
+
+            clearInterval(this.interval);
+
+            this.bird.anims.stop();
+
+            this.setEndGame();
+
+            this.input.keyboard.on(ACTION_KEY_CODES.GAME_RESTART, this.restart);
+            this.input.on(ACTION_POINTER_CODES.GAME_RESTART, this.restart);
+        } else {
+            wall.disableBody(true);
+            this.setScore(GAME.POINTS);
+        }
+    };
+
+    setScore = (points = 0) => {
+        const text = `Score: ${this.points += points}`;
+        const style = {
+            font: '24px Arial',
+            fill: '#fff'
+        };
+
+        if(this.score) {
+            this.score.destroy();
+        }
+
+        this.score = this.add.text(10, 10, text, style);
+    };
+
+    setEndGame = () => {
+        const text = 'Press enter to restart';
+        const style = {
+            font: '24px Arial',
+            fill: '#fff'
+        };
+
+        this.endGame = this.add.text(this.scale.width / 2, this.scale.height / 2, text, style).setOrigin(0.5);
     };
 }
 

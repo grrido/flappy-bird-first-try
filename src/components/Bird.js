@@ -1,4 +1,5 @@
 import { Physics } from 'phaser';
+import { GAME, ACTION_KEY_CODES, ACTION_POINTER_CODES } from 'src/config';
 
 
 class Bird extends Physics.Arcade.Sprite {
@@ -10,8 +11,10 @@ class Bird extends Physics.Arcade.Sprite {
     {
         super(scene, scene.scale.width / 2, scene.scale.height / 2, texture);
 
-        scene.input.keyboard.on('keydown', this.handleKeydown);
-        scene.input.keyboard.on('keyup', this.handleKeyup);
+        scene.input.keyboard.on(ACTION_KEY_CODES.FLY_START, this.handleFlyStart);
+        scene.input.keyboard.on(ACTION_KEY_CODES.FLY_STOP, this.handleFlyStop);
+        scene.input.on(ACTION_POINTER_CODES.FLY_START, this.handleFlyStart);
+        scene.input.on(ACTION_POINTER_CODES.FLY_STOP, this.handleFlyStop);
         scene.physics.add.existing(this);
         scene.add.existing(this);
 
@@ -25,19 +28,21 @@ class Bird extends Physics.Arcade.Sprite {
     };
 
     fly = () => {
+        const acceleration = 10;
+
         if (this.isFlying)
         {
-            this.body.setVelocityY(this.speed -= 10);
+            this.body.setVelocityY(this.speed -= acceleration);
         } else {
-            this.speed = -200;
+            this.speed = -GAME.BIRD_SPEED;
         }
     };
 
-    handleKeydown = () => {
+    handleFlyStart = () => {
         this.isFlying = true;
     };
 
-    handleKeyup = () => {
+    handleFlyStop = () => {
         this.isFlying = false;
     };
 
